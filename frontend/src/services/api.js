@@ -23,4 +23,18 @@ API.interceptors.request.use(
   }
 );
 
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
+  
+  let baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
+  if (!baseUrl && import.meta.env.VITE_API_URL) {
+    baseUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '');
+  }
+  if (!baseUrl) {
+    baseUrl = 'http://localhost:5000';
+  }
+  return `${baseUrl}${imagePath}`;
+};
+
 export default API;

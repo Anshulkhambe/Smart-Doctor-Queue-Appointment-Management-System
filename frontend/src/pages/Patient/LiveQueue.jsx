@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, Clock, Users, Stethoscope, AlertCircle, RefreshCw, Sparkles, UserCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import API from '../../services/api';
+import API, { getImageUrl } from '../../services/api';
 import Loader from '../../components/Loader';
 import toast from 'react-hot-toast';
 
@@ -204,7 +204,7 @@ const LiveQueue = () => {
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 font-bold uppercase dark:bg-sky-950/40 dark:text-sky-300">
               {appointment.doctor.image ? (
-                <img src={`http://localhost:5000${appointment.doctor.image}`} alt="Doctor" className="h-full w-full object-cover rounded-2xl" />
+                <img src={getImageUrl(appointment.doctor.image)} alt="Doctor" className="h-full w-full object-cover rounded-2xl" />
               ) : (
                 <Stethoscope className="h-6 w-6" />
               )}

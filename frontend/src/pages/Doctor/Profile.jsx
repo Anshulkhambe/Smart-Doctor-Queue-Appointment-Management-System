@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { User, Stethoscope, Briefcase, MapPin, IndianRupee, Clock, Save, Camera } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import API from '../../services/api';
+import API, { getImageUrl } from '../../services/api';
 import Loader from '../../components/Loader';
 import toast from 'react-hot-toast';
 
@@ -33,7 +33,7 @@ const Profile = () => {
           setValue('workingHoursEnd', doctor.workingHours?.end || '17:00');
           
           if (doctor.image) {
-            setPreviewUrl(`http://localhost:5000${doctor.image}`);
+            setPreviewUrl(getImageUrl(doctor.image));
           }
         }
       } catch (err) {
@@ -85,7 +85,7 @@ const Profile = () => {
         updateUser({ name: data.name });
         
         if (res.data.doctor.image) {
-          setPreviewUrl(`http://localhost:5000${res.data.doctor.image}`);
+          setPreviewUrl(getImageUrl(res.data.doctor.image));
         }
       }
     } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stethoscope, Briefcase, MapPin, IndianRupee, Calendar, Clock, Search, SlidersHorizontal, CheckCircle2, AlertCircle } from 'lucide-react';
-import API from '../../services/api';
+import API, { getImageUrl } from '../../services/api';
 import Loader from '../../components/Loader';
 import toast from 'react-hot-toast';
 
@@ -203,7 +203,7 @@ const BookAppointment = () => {
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 font-bold uppercase dark:bg-sky-950/40 dark:text-sky-300">
                       {doctor.image ? (
-                        <img src={`http://localhost:5000${doctor.image}`} alt={doctor.userId?.name} className="h-full w-full object-cover rounded-2xl" />
+                        <img src={getImageUrl(doctor.image)} alt={doctor.userId?.name} className="h-full w-full object-cover rounded-2xl" />
                       ) : (
                         doctor.userId?.name.charAt(0)
                       )}
