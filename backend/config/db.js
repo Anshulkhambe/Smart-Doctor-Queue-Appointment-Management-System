@@ -1,27 +1,36 @@
 const { Sequelize } = require('sequelize');
 
 let sequelize;
+const databaseUrl = process.env.DATABASE_URL ? process.env.DATABASE_URL.trim() : '';
 
-if (process.env.DATABASE_URL) {
-  // If DATABASE_URL is set (standard for Render PostgreSQL), connect using the URL
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
+if (databaseUrl && databaseUrl.includes('://')) {
+  // Connect using a connection string URL (supports postgres:// and mysql://)
+  const isPostgres = databaseUrl.startsWith('postgres') || databaseUrl.startsWith('postgresql');
+  const dialect = isPostgres ? 'postgres' : 'mysql';
+  
+  const options = {
+    dialect,
     logging: false,
-    dialectOptions: {
-      ssl: process.env.DB_SSL === 'false' ? false : {
-        require: true,
-        rejectUnauthorized: false // Required for Render PostgreSQL connection from external sources
-      }
-    },
     pool: {
       max: 5,
       min: 0,
       acquire: 30000,
       idle: 10000
     }
-  });
+  };
+
+  if (isPostgres) {
+    options.dialectOptions = {
+      ssl: process.env.DB_SSL === 'false' ? false : {
+        require: true,
+        rejectUnauthorized: false // Required for Render PostgreSQL connection from external sources
+      }
+    };
+  }
+
+  sequelize = new Sequelize(databaseUrl, options);
 } else {
-  // Fall back to MySQL configuration for local development
+  // Fall back to MySQL configuration using individual variables for local development
   const host = process.env.MYSQL_HOST || 'localhost';
   const port = process.env.MYSQL_PORT || 3306;
   const user = process.env.MYSQL_USER || 'root';
@@ -43,13 +52,16 @@ if (process.env.DATABASE_URL) {
 }
 
 /**
- * Establishes connection to the database. Checks for database existence and creates it if using MySQL,
+ * Establishes connection to the database. Checks for database existence and creates it if using MySQL (without URL),
  * then initiates connection authenticate and table sync.
  */
 const connectDB = async () => {
   try {
-    // 1. Ensure the database exists (MySQL only)
-    if (!process.env.DATABASE_URL) {
+    const isUsingUrl = !!(databaseUrl && databaseUrl.includes('://'));
+    const isPostgres = isUsingUrl && (databaseUrl.startsWith('postgres') || databaseUrl.startsWith('postgresql'));
+
+    // 1. Ensure the database exists (MySQL local only - when not using a connection string)
+    if (!isUsingUrl) {
       const mysql = require('mysql2/promise');
       const host = process.env.MYSQL_HOST || 'localhost';
       const port = process.env.MYSQL_PORT || 3306;
