@@ -14,7 +14,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 
-// Initialize MongoDB connection
+// Initialize MySQL connection
 connectDB();
 
 // Create Express application
