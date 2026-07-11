@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
  * @returns {string} - JWT Token
  */
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'doctor_queue_secret_key_2026_dev', {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 };
