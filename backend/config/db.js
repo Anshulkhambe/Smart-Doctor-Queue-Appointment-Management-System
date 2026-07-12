@@ -91,6 +91,10 @@ const connectDB = async () => {
     // Sync database schemas
     await sequelize.sync({ alter: true });
     console.log(`[Database] ${dialect} schemas synchronized successfully.`);
+
+    // Run automatic seeding for empty database deployments (e.g. Render)
+    const autoSeed = require('../utils/autoSeed');
+    await autoSeed();
   } catch (error) {
     console.error(`[Database] Database connection failure: ${error.message}`);
     process.exit(1);
