@@ -218,10 +218,11 @@ const updateQueue = async (req, res, next) => {
             console.warn('[QueueController] Failed to push delay alert:', socketErr.message);
           }
 
-          // Trigger email alert
+          // Trigger email alert (asynchronously to avoid blocking in the loop)
           try {
             if (patientEmail) {
-              await sendDoctorDelayedEmail(patientEmail, patientName, doctorName, delayMins);
+              sendDoctorDelayedEmail(patientEmail, patientName, doctorName, delayMins)
+                .catch(emailErr => console.error('[QueueController] Failed to send delay email:', emailErr.message));
             }
           } catch (emailErr) {
             console.error('[QueueController] Failed to send delay email:', emailErr.message);

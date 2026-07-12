@@ -104,13 +104,14 @@ const bookAppointment = async (req, res, next) => {
       console.warn('[AppointmentController] Failed to push notification over socket:', socketErr.message);
     }
 
-    // Trigger mock email notification
+    // Trigger mock email notification (asynchronously to prevent request timeout)
     try {
       const patientEmail = req.user.email;
       const patientName = req.user.name;
       const doctorName = doctorProfile.userId.name;
       if (patientEmail) {
-        await sendAppointmentConfirmedEmail(patientEmail, patientName, doctorName, date, time, queueNumber);
+        sendAppointmentConfirmedEmail(patientEmail, patientName, doctorName, date, time, queueNumber)
+          .catch(emailErr => console.error('[AppointmentController] Failed to send confirmation email:', emailErr.message));
       }
     } catch (emailErr) {
       console.error('[AppointmentController] Failed to send confirmation email:', emailErr.message);
@@ -301,17 +302,17 @@ const cancelAppointment = async (req, res, next) => {
       console.warn('[AppointmentController] Failed to push cancellation notification:', socketErr.message);
     }
 
-    // Trigger mock email notification
+    // Trigger mock email notification (asynchronously to prevent request timeout)
     try {
       const patientUser = appointment.patient?.userId;
       if (patientUser && patientUser.email) {
-        await sendAppointmentCancelledEmail(
+        sendAppointmentCancelledEmail(
           patientUser.email,
           patientUser.name,
           appointment.doctor.userId.name,
           appointment.date,
           appointment.time
-        );
+        ).catch(emailErr => console.error('[AppointmentController] Failed to send cancellation email:', emailErr.message));
       }
     } catch (emailErr) {
       console.error('[AppointmentController] Failed to send cancellation email:', emailErr.message);
