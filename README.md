@@ -44,6 +44,8 @@ A premium, modern, real-time platform designed to streamline doctor appointments
 - **System Metrics:** Complete breakdown of global system stats, active users, doctor metrics, and total appointment counts.
 - **Doctor & Patient Management:** Verify, deactivate, or delete profiles/user accounts.
 - **Availability Controls:** Force-toggle doctor availability statuses globally.
+- Admin Credentials-Email Address: admin@example.com
+   Password: password123
 
 ### ⚡ Real-Time Engine
 - **Live Updates:** Real-time synchronization of queue numbers to waiting patients' screens when a doctor updates status.
